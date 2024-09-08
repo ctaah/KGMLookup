@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kogama Profile Lookup</title>
+    <style>
+        :root {
+            --background-color: #2e2e2e;
+            --input-bg-color: #3e3e3e;
+            --input-border-color: #4e4e4e;
+            --button-bg-color: #4caf50;
+            --button-hover-bg-color: #388e3c;
+            --result-bg-color: rgba(62, 62, 62, 0.6);
+            --panel-bg-color: hsla(327, 9.1%, 19.4%, 0.9);
+            --panel-border-color: #4e4e4e;
+            --text-color: #e0e0e0;
+            --accent-color: #9f68c4;
+            --code-bg-color: #1e1e1e;
+            --code-text-color: #f5f5f5;
+            --panel-expanded-bg-color: hsla(327, 9.1%, 19.4%, 0.5);
+        }
+
+        body {
+            font-family: 'Monospace', monospace;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 1347px;
+        }
+
+        .logo {
+            width: 1347px;
+            height: 438px;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            padding: 10px;
+            border: 1px solid var(--input-border-color);
+            border-radius: 5px;
+            background-color: var(--input-bg-color);
+            color: var(--text-color);
+            outline: none;
+        }
+
+        .dropdown {
+            flex: 1;
+            max-width: 150px;
+        }
+
+        .btn {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: var(--button-bg-color);
+            color: var(--text-color);
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: var(--button-hover-bg-color);
+        }
+
+        .result-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-color: var(--background-color);
+    border-radius: 8px;
+    margin-top: 20px;
+    width: 100%;
+    max-width: 1347px;
+    position: relative;
+    backdrop-filter: blur(10px);
+    box-sizing: border-box;
+}
+.profile-banner, .progress-panel {
+    margin: 20px auto;
+}
+
+.profile-banner, .progress-panel {
+    width: 100%;
+    max-width: 600px;
+}
+
+        .profile-banner {
+            display: flex;
+            align-items: center;
+            background: var(--panel-bg-color);
+            border: 1px solid var(--panel-border-color);
+            border-radius: 8px;
+            padding: 20px;
+            gap: 20px;
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            backdrop-filter: blur(5px);
+        }
+        .profile-banner:hover {
+            background: var(--panel-expanded-bg-color);
+        }
+
+        .profile-img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .profile-details {
+            color: var(--text-color);
+            flex: 1;
+        }
+
+        .profile-details h2 {
+            margin: 0;
+            color: var(--accent-color);
+        }
+
+        .profile-details p {
+            margin: 5px 0;
+        }
+
+        .profile-details p strong {
+            color: var(--accent-color);
+        }
+
+        .panel-content {
+            display: none;
+            margin-top: 10px;
+            border-top: 1px solid var(--panel-border-color);
+            padding-top: 10px;
+        }
+
+        .panel-content pre {
+            background-color: var(--code-bg-color);
+            color: var(--code-text-color);
+            padding: 10px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            overflow: auto;
+            margin: 0;
+        }
+
+        .profile-banner.expanded .panel-content {
+            display: block;
+        }
+
+        .progress-panel {
+            background: var(--panel-bg-color);
+            border: 1px solid var(--panel-border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            max-width: 600px;
+            width: 100%;
+            backdrop-filter: blur(5px);
+        }
+
+        .progress-panel h3 {
+            margin-top: 0;
+            color: var(--accent-color);
+        }
+
+        .progress-panel p {
+            margin: 5px 0;
+        }
+
+        .progress-bar {
+            background-color: var(--input-bg-color);
+            border-radius: 5px;
+            height: 10px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        .progress-bar-inner {
+            height: 100%;
+            background-color: var(--accent-color);
+            width: 0;
+            transition: width 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <div class="container">
+            <img src="img/logo.png" alt="Logo" class="logo">
+            <div class="input-group">
+                <select id="serverDropdown" class="form-control dropdown">
+                    <option value="LIVE">LIVE</option>
+                    <option value="BRAZIL">BRAZIL</option>
+                    <option value="FRIENDS">FRIENDS</option>
+                </select>
+                <input type="text" id="userId" class="form-control" placeholder="Enter User ID">
+                <button id="fetchDataBtn" class="btn">Search</button>
+            </div>
+
+            <div id="result" class="result-container">
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const fetchDataBtn = document.getElementById('fetchDataBtn');
+            const serverDropdown = document.getElementById('serverDropdown');
+            const userIdInput = document.getElementById('userId');
+            const resultContainer = document.getElementById('result');
+
+            const getServerUrl = (server) => {
+                const urls = {
+                    LIVE: 'https://www.kogama.com/profile/',
+                    BRAZIL: 'https://kogama.com.br/profile/',
+                    FRIENDS: 'https://friends.kogama.com/profile/'
+                };
+                return urls[server] || urls.LIVE;
+            };
+
+            const extractJsonFromScript = (html) => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const script = doc.querySelector('script');
+                if (script) {
+                    const scriptContent = script.textContent;
+                    const match = scriptContent.match(/options\.bootstrap\s*=\s*({.*?});/s);
+                    if (match && match[1]) {
+                        try {
+                            return JSON.parse(match[1]);
+                        } catch (e) {
+                            console.error('Error parsing JSON:', e);
+                            return null;
+                        }
+                    }
+                }
+                return null;
+            };
+
+            const displayProfile = (profile) => {
+                const { username, id, leaderboard_rank, created, level_images, images, xp, gold, silver, last_ping, friends, description, level_progress, next_level_xp, xp_to_next_level } = profile.object;
+                const formattedDate = new Date(created).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    timeZoneName: 'short'
+                });
+                const lastOnline = new Date(last_ping).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    timeZoneName: 'short'
+                });
+
+                const progressPercent = Math.round((xp / next_level_xp) * 100);
+
+                resultContainer.innerHTML = `
+                    <div class="profile-banner">
+                        <img src="${images.large}" alt="${username}'s Profile Picture" class="profile-img">
+                        <div class="profile-details">
+                            <h2>${username}</h2>
+                            <p><strong>ID:</strong> ${id}</p>
+                            <p><strong>Leaderboard Rank:</strong> ${leaderboard_rank}</p>
+                            <p><strong>Created:</strong> ${formattedDate}</p>
+                            <p><strong>Last Online:</strong> ${lastOnline}</p>
+                        </div>
+                        <div class="panel-content">
+                            <pre>${description || 'No description available.'}</pre>
+                        </div>
+                    </div>
+                    <div class="progress-panel">
+                        <h3>Progress</h3>
+                        <p><strong>Level:</strong> ${profile.object.level} (${xp} XP)</p>
+                        <div class="progress-bar">
+                            <div class="progress-bar-inner" style="width: ${progressPercent}%;"></div>
+                        </div>
+                        <p><strong>XP Progress:</strong> ${progressPercent}% (${xp_to_next_level} XP to next level)</p>
+                        <p><strong>Next Level XP:</strong> ${next_level_xp}</p>
+                        <p><strong>Gold:</strong> ${gold}</p>
+                        <p><strong>Silver:</strong> ${silver}</p>
+                        <p><strong>Friends:</strong> ${friends}</p>
+                    </div>
+                `;
+            };
+
+            fetchDataBtn.addEventListener('click', async () => {
+                const server = serverDropdown.value;
+                const userId = userIdInput.value.trim();
+
+                if (!userId) {
+                    alert('Please enter a User ID.');
+                    return;
+                }
+
+                const serverUrl = getServerUrl(server);
+                const url = `https://api.allorigins.win/get?url=${encodeURIComponent(serverUrl + userId)}`;
+
+                try {
+                    const response = await fetch(url);
+                    const data = await response.json();
+                    const htmlContent = data.contents;
+                    const jsonData = extractJsonFromScript(htmlContent);
+
+                    if (jsonData) {
+                        displayProfile(jsonData);
+                        resultContainer.style.display = 'block';
+                    } else {
+                        resultContainer.innerHTML = 'No valid JSON data found.';
+                        resultContainer.style.display = 'block';
+                    }
+                } catch (error) {
+                    resultContainer.innerHTML = 'Error fetching data.';
+                    resultContainer.style.display = 'block';
+                    console.error('Fetch error:', error);
+                }
+            });
+            document.addEventListener('click', (e) => {
+                if (e.target.closest('.profile-banner')) {
+                    e.target.closest('.profile-banner').classList.toggle('expanded');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
