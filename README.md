@@ -1,4 +1,8 @@
 <div align="center">
+
+![image](https://github.com/user-attachments/assets/46b6b9c1-fb4d-4ffc-9a5c-8b6acc034ae9)
+
+
 <h1>KGM LookUp</h1>
 My very-own implementation of <a href="https://github.com/Devorkk"> @Devorkk's</a> kogama profile look-up.
 
